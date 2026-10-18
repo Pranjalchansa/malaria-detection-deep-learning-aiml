@@ -19,64 +19,34 @@
   <body>
     <div class="mosquito-bg"></div>
 
-    <!-- LOGIN PAGE -->
+    {% macro navbar() %}
+    <nav>
+      <h3>🦟 Malaria AI</h3>
 
-    <div id="loginPage" class="page active">
-      <div class="card">
-        <h2>🦟 Malaria Detection AI</h2>
-        <p class="subtitle">Early Detection Saves Lives</p>
-
-        <div class="login-extra">
-          <p>✔ AI Powered Diagnosis</p>
-          <p>✔ 95%+ Accuracy</p>
-          <p>✔ Instant Analysis</p>
-        </div>
-
-        <input type="text" id="loginUser" placeholder="Username" />
-        <input type="password" id="loginPass" placeholder="Password" />
-
-        <button id="loginBtn" class="primary-btn">Login</button>
-
-        <p class="switch-text">
-          Don't have an account?
-          <span class="link" id="goSignup">Create Account</span>
-        </p>
+      <div>
+        <button onclick="showHome()">Home</button>
+        <button onclick="showUpload()">Upload</button>
+        <button onclick="showPerformance()">Model Performance</button>
+        <button onclick="showTechnology()">AI Technology</button>
+        <form
+          method="POST"
+          action="{{ url_for('logout') }}"
+          style="display: inline"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit">Logout ({{ current_user.username }})</button>
+        </form>
       </div>
-    </div>
-
-    <!-- SIGNUP PAGE -->
-
-    <div id="signupPage" class="page">
-      <div class="card">
-        <h2>Create Account</h2>
-        <p class="subtitle">Join Malaria AI System</p>
-
-        <input type="text" id="signupUser" placeholder="Username" />
-        <input type="password" id="signupPass" placeholder="Password" />
-
-        <button id="signupBtn" class="primary-btn">Create Account</button>
-
-        <p class="switch-text">
-          Already have an account?
-          <span class="link" id="goLogin">Login</span>
-        </p>
-      </div>
-    </div>
+    </nav>
+    {% endmacro %}
 
     <!-- HOME PAGE -->
 
-    <div id="homePage" class="page">
-      <nav>
-        <h3>🦟 Malaria AI</h3>
-
-        <div>
-          <button onclick="showHome()">Home</button>
-          <button onclick="showUpload()">Upload</button>
-          <button onclick="showPerformance()">Model Performance</button>
-          <button onclick="showTechnology()">AI Technology</button>
-          <button onclick="logout()">Logout</button>
-        </div>
-      </nav>
+    <div
+      id="homePage"
+      class="page {% if not result and not error %}active{% endif %}"
+    >
+      {{ navbar() }}
 
       <div class="content">
         <h2>About Malaria</h2>
@@ -126,25 +96,29 @@
 
     <!-- UPLOAD PAGE -->
 
-    <div id="uploadPage" class="page {% if result %}active{% endif %}">
-      <nav>
-        <h3>🦟 Malaria AI</h3>
-
-        <div>
-          <button onclick="showHome()">Home</button>
-          <button onclick="showUpload()">Upload</button>
-          <button onclick="showPerformance()">Model Performance</button>
-          <button onclick="showTechnology()">AI Technology</button>
-          <button onclick="logout()">Logout</button>
-        </div>
-      </nav>
+    <div id="uploadPage" class="page {% if result or error %}active{% endif %}">
+      {{ navbar() }}
 
       <div class="content upload-section">
         <h2>Upload Blood Smear Image</h2>
         <p>AI Microscopic Analysis</p>
 
-        <form action="/predict" method="POST" enctype="multipart/form-data">
-          <input type="file" name="file" accept="image/*" required />
+        {% if error %}
+        <p style="color: #d32f2f"><strong>{{ error }}</strong></p>
+        {% endif %}
+
+        <form
+          action="{{ url_for('predict') }}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input
+            type="file"
+            name="file"
+            accept="image/png, image/jpeg"
+            required
+          />
 
           <br /><br />
 
@@ -176,17 +150,7 @@
     <!-- MODEL PERFORMANCE PAGE -->
 
     <div id="performancePage" class="page">
-      <nav>
-        <h3>🦟 Malaria AI</h3>
-
-        <div>
-          <button onclick="showHome()">Home</button>
-          <button onclick="showUpload()">Upload</button>
-          <button onclick="showPerformance()">Model Performance</button>
-          <button onclick="showTechnology()">AI Technology</button>
-          <button onclick="logout()">Logout</button>
-        </div>
-      </nav>
+      {{ navbar() }}
 
       <div class="content">
         <h2>Model Performance</h2>
@@ -207,17 +171,7 @@
     <!-- AI TECHNOLOGY PAGE -->
 
     <div id="technologyPage" class="page">
-      <nav>
-        <h3>🦟 Malaria AI</h3>
-
-        <div>
-          <button onclick="showHome()">Home</button>
-          <button onclick="showUpload()">Upload</button>
-          <button onclick="showPerformance()">Model Performance</button>
-          <button onclick="showTechnology()">AI Technology</button>
-          <button onclick="logout()">Logout</button>
-        </div>
-      </nav>
+      {{ navbar() }}
 
       <div class="content">
         <h2>How The AI Works</h2>
@@ -269,31 +223,6 @@
         hideAll();
         document.getElementById("technologyPage").classList.add("active");
       }
-
-      function logout() {
-        hideAll();
-        document.getElementById("loginPage").classList.add("active");
-      }
-
-      document.getElementById("goSignup").onclick = function () {
-        hideAll();
-        document.getElementById("signupPage").classList.add("active");
-      };
-
-      document.getElementById("goLogin").onclick = function () {
-        hideAll();
-        document.getElementById("loginPage").classList.add("active");
-      };
-
-      document.getElementById("loginBtn").onclick = function () {
-        hideAll();
-        document.getElementById("homePage").classList.add("active");
-      };
-
-      document.getElementById("signupBtn").onclick = function () {
-        hideAll();
-        document.getElementById("loginPage").classList.add("active");
-      };
     </script>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

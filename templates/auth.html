@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% if mode == 'login' %}Sign in{% elif mode == 'signup' %}Create account{%
+      elif mode == 'forgot' %}Reset password{% else %}New password{% endif %} |
+      Malaria AI
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='auth.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="auth">
+      <!-- ============ Left: microscope field ============ -->
+      <aside class="auth-aside">
+        <a class="brand" href="{{ url_for('home') }}">
+          <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">
+            <circle cx="17" cy="17" r="16" fill="#f4e4ec" />
+            <circle cx="17" cy="17" r="7" fill="#e9a3b8" />
+            <circle
+              cx="20"
+              cy="14"
+              r="4"
+              fill="none"
+              stroke="#4b2a8c"
+              stroke-width="2"
+            />
+            <circle cx="22.6" cy="14" r="1.4" fill="#3a1d74" />
+          </svg>
+          Malaria AI
+        </a>
+
+        <div class="aside-copy">
+          <h2>Screen blood smear images for malaria parasites</h2>
+          <p>
+            Upload a microscope image of a blood smear and get a result with a
+            confidence score.
+          </p>
+        </div>
+
+        <div class="field-view">
+          <svg viewBox="0 0 400 400" role="presentation" aria-hidden="true">
+            <defs>
+              <clipPath id="lens">
+                <circle cx="200" cy="200" r="190" />
+              </clipPath>
+              <radialGradient id="light" cx="50%" cy="45%" r="60%">
+                <stop offset="0%" stop-color="#fbeff4" />
+                <stop offset="100%" stop-color="#ecd3df" />
+              </radialGradient>
+            </defs>
+
+            <g clip-path="url(#lens)">
+              <rect width="400" height="400" fill="url(#light)" />
+
+              <g class="cells">
+                <!-- red blood cells -->
+                <g fill="#e9a3b8" stroke="#d77c9c" stroke-width="2">
+                  <circle cx="90" cy="100" r="36" />
+                  <circle cx="180" cy="62" r="32" />
+                  <circle cx="282" cy="108" r="38" />
+                  <circle cx="352" cy="200" r="34" />
+                  <circle cx="300" cy="300" r="37" />
+                  <circle cx="190" cy="336" r="35" />
+                  <circle cx="88" cy="292" r="38" />
+                  <circle cx="56" cy="190" r="33" />
+                  <circle cx="192" cy="192" r="40" />
+                  <circle cx="330" cy="30" r="30" />
+                  <circle cx="36" cy="340" r="30" />
+                  <circle cx="380" cy="330" r="30" />
+                </g>
+                <!-- central pallor -->
+                <g fill="#f6cfdb" opacity="0.85">
+                  <circle cx="90" cy="100" r="15" />
+                  <circle cx="180" cy="62" r="13" />
+                  <circle cx="282" cy="108" r="16" />
+                  <circle cx="352" cy="200" r="14" />
+                  <circle cx="300" cy="300" r="15" />
+                  <circle cx="190" cy="336" r="14" />
+                  <circle cx="88" cy="292" r="16" />
+                  <circle cx="56" cy="190" r="13" />
+                  <circle cx="192" cy="192" r="17" />
+                  <circle cx="330" cy="30" r="12" />
+                  <circle cx="36" cy="340" r="12" />
+                  <circle cx="380" cy="330" r="12" />
+                </g>
+                <!-- ring-form parasites -->
+                <g fill="none" stroke="#4b2a8c" stroke-width="3.2">
+                  <circle cx="201" cy="183" r="8" />
+                  <circle cx="291" cy="307" r="6.5" />
+                </g>
+                <g fill="#3a1d74">
+                  <circle cx="208.5" cy="180.5" r="3.2" />
+                  <circle cx="296.5" cy="304" r="2.8" />
+                </g>
+                <!-- platelets -->
+                <g fill="#7b4fb8" opacity="0.7">
+                  <circle cx="138" cy="146" r="4.5" />
+                  <circle cx="244" cy="262" r="4" />
+                  <circle cx="246" cy="52" r="3.5" />
+                </g>
+              </g>
+
+              <!-- scale bar: 100 units = 10 micrometres, so a red cell is about 7 um -->
+              <line
+                x1="150"
+                y1="352"
+                x2="250"
+                y2="352"
+                stroke="#4b2a8c"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <text
+                x="200"
+                y="372"
+                text-anchor="middle"
+                font-size="12"
+                font-weight="600"
+                fill="#4b2a8c"
+                font-family="Instrument Sans, sans-serif"
+              >
+                10 µm
+              </text>
+            </g>
+
+            <circle
+              cx="200"
+              cy="200"
+              r="190"
+              fill="none"
+              stroke="#0e0925"
+              stroke-width="10"
+            />
+            <circle
+              cx="200"
+              cy="200"
+              r="195.5"
+              fill="none"
+              stroke="#4a3590"
+              stroke-width="1.5"
+            />
+          </svg>
+        </div>
+
+        <p class="aside-note">
+          A screening aid only. It does not replace a lab test or a doctor.
+        </p>
+      </aside>
+
+      <!-- ============ Right: form ============ -->
+      <main class="auth-main">
+        <div class="auth-card">
+          {% if mode == 'login' %}
+          <h1>Sign in</h1>
+          <p class="lead">Use your username or email address.</p>
+          {% elif mode == 'signup' %}
+          <h1>Create your account</h1>
+          <p class="lead">Choose a username and a strong password.</p>
+          {% elif mode == 'forgot' %}
+          <h1>Reset your password</h1>
+          <p class="lead">
+            Enter the email on your account. We'll send a reset link that works
+            for 30 minutes.
+          </p>
+          {% else %}
+          <h1>Choose a new password</h1>
+          <p class="lead">You'll use it the next time you sign in.</p>
+          {% endif %} {% with messages =
+          get_flashed_messages(with_categories=true) %} {% if messages %}
+          <div class="alerts" role="alert">
+            {% for category, message in messages %}
+            <div
+              class="alert {{ 'alert-success' if category == 'success' else 'alert-error' }}"
+            >
+              {% if category == 'success' %}
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <circle
+                  cx="10"
+                  cy="10"
+                  r="9"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M6 10.4l2.8 2.8L14 7.6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              {% else %}
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <circle
+                  cx="10"
+                  cy="10"
+                  r="9"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M10 5.5v5.5M10 13.6v.9"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
+
+          <!-- ---------- SIGN IN ---------- -->
+          {% if mode == 'login' %}
+          <form
+            class="form"
+            method="POST"
+            action="{{ url_for('login', next=request.args.get('next')) }}"
+            data-loading="Signing in…"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="field">
+              <label for="identifier">Username or email</label>
+              <input
+                class="input"
+                id="identifier"
+                name="identifier"
+                type="text"
+                value="{{ identifier or '' }}"
+                autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
+                required
+                autofocus
+              />
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <label for="password" style="margin: 0">Password</label>
+                <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
+              </div>
+              <div class="pw">
+                <input
+                  class="input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  class="pw-toggle"
+                  type="button"
+                  data-toggle="password"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+            </div>
+
+            <button class="btn" type="submit">Sign in</button>
+          </form>
+          <p class="switch">
+            New here? <a href="{{ url_for('signup') }}">Create an account</a>
+          </p>
+
+          <!-- ---------- CREATE ACCOUNT ---------- -->
+          {% elif mode == 'signup' %}
+          <form
+            class="form"
+            method="POST"
+            action="{{ url_for('signup') }}"
+            data-loading="Creating account…"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="field">
+              <label for="username">Username</label>
+              <input
+                class="input"
+                id="username"
+                name="username"
+                type="text"
+                value="{{ username or '' }}"
+                autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
+                minlength="3"
+                maxlength="30"
+                pattern="[A-Za-z0-9_]{3,30}"
+                title="3 to 30 characters: letters, numbers and underscores"
+                required
+                autofocus
+              />
+              <p class="hint">
+                Letters, numbers and underscores, 3 to 30 characters.
+              </p>
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input
+                class="input"
+                id="email"
+                name="email"
+                type="email"
+                value="{{ email or '' }}"
+                autocomplete="email"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="pw">
+                <input
+                  class="input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  maxlength="128"
+                  required
+                  data-strength
+                />
+                <button
+                  class="pw-toggle"
+                  type="button"
+                  data-toggle="password"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+              <div class="meter" data-level="0" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <ul class="reqs" aria-label="Password requirements">
+                <li data-req="len">8+ characters</li>
+                <li data-req="upper">Uppercase letter</li>
+                <li data-req="lower">Lowercase letter</li>
+                <li data-req="num">A number</li>
+              </ul>
+            </div>
+
+            <div class="field">
+              <label for="confirm">Confirm password</label>
+              <div class="pw">
+                <input
+                  class="input"
+                  id="confirm"
+                  name="confirm"
+                  type="password"
+                  autocomplete="new-password"
+                  required
+                  data-confirm="password"
+                />
+                <button
+                  class="pw-toggle"
+                  type="button"
+                  data-toggle="confirm"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+              <p class="hint" data-confirm-hint></p>
+            </div>
+
+            <button class="btn" type="submit">Create account</button>
+          </form>
+          <p class="switch">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Sign in</a>
+          </p>
+
+          <!-- ---------- FORGOT PASSWORD ---------- -->
+          {% elif mode == 'forgot' %}
+          <form
+            class="form"
+            method="POST"
+            action="{{ url_for('forgot_password') }}"
+            data-loading="Sending…"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input
+                class="input"
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                autofocus
+              />
+            </div>
+
+            <button class="btn" type="submit">Send reset link</button>
+          </form>
+          <p class="switch">
+            <a href="{{ url_for('login') }}">Back to sign in</a>
+          </p>
+
+          <!-- ---------- NEW PASSWORD ---------- -->
+          {% else %}
+          <form
+            class="form"
+            method="POST"
+            action="{{ url_for('reset_password', token=token) }}"
+            data-loading="Updating…"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="field">
+              <label for="password">New password</label>
+              <div class="pw">
+                <input
+                  class="input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  maxlength="128"
+                  required
+                  data-strength
+                  autofocus
+                />
+                <button
+                  class="pw-toggle"
+                  type="button"
+                  data-toggle="password"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+              <div class="meter" data-level="0" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <ul class="reqs" aria-label="Password requirements">
+                <li data-req="len">8+ characters</li>
+                <li data-req="upper">Uppercase letter</li>
+                <li data-req="lower">Lowercase letter</li>
+                <li data-req="num">A number</li>
+              </ul>
+            </div>
+
+            <div class="field">
+              <label for="confirm">Confirm new password</label>
+              <div class="pw">
+                <input
+                  class="input"
+                  id="confirm"
+                  name="confirm"
+                  type="password"
+                  autocomplete="new-password"
+                  required
+                  data-confirm="password"
+                />
+                <button
+                  class="pw-toggle"
+                  type="button"
+                  data-toggle="confirm"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+              <p class="hint" data-confirm-hint></p>
+            </div>
+
+            <button class="btn" type="submit">Update password</button>
+          </form>
+          {% endif %}
+
+          <p class="footer-note">
+            Results are a screening aid and not a medical diagnosis. See a
+            doctor for any suspected malaria.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        // Show / hide password
+        document.querySelectorAll("[data-toggle]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var input = document.getElementById(
+              btn.getAttribute("data-toggle"),
+            );
+            var show = input.type === "password";
+            input.type = show ? "text" : "password";
+            btn.textContent = show ? "Hide" : "Show";
+            btn.setAttribute(
+              "aria-label",
+              show ? "Hide password" : "Show password",
+            );
+          });
+        });
+
+        // Password strength + requirement checklist
+        var pw = document.querySelector("[data-strength]");
+        if (pw) {
+          var meter = document.querySelector(".meter");
+          var reqs = {
+            len: function (v) {
+              return v.length >= 8;
+            },
+            upper: function (v) {
+              return /[A-Z]/.test(v);
+            },
+            lower: function (v) {
+              return /[a-z]/.test(v);
+            },
+            num: function (v) {
+              return /\d/.test(v);
+            },
+          };
+          pw.addEventListener("input", function () {
+            var v = pw.value,
+              met = 0;
+            Object.keys(reqs).forEach(function (key) {
+              var ok = reqs[key](v);
+              if (ok) met++;
+              var li = document.querySelector('[data-req="' + key + '"]');
+              if (li) li.classList.toggle("met", ok);
+            });
+            var level = v.length === 0 ? 0 : Math.max(1, met);
+            if (met === 4 && v.length < 12) level = 3;
+            meter.setAttribute("data-level", level);
+          });
+        }
+
+        // Confirm-password match hint
+        var confirm = document.querySelector("[data-confirm]");
+        if (confirm) {
+          var hint = document.querySelector("[data-confirm-hint]");
+          var source = document.getElementById(
+            confirm.getAttribute("data-confirm"),
+          );
+          var check = function () {
+            if (!confirm.value) {
+              hint.textContent = "";
+              hint.className = "hint";
+              return;
+            }
+            var same = confirm.value === source.value;
+            hint.textContent = same
+              ? "Passwords match."
+              : "Passwords don't match yet.";
+            hint.className = "hint " + (same ? "good" : "bad");
+          };
+          confirm.addEventListener("input", check);
+          source.addEventListener("input", check);
+        }
+
+        // Loading state on submit (prevents double submits)
+        document
+          .querySelectorAll("form[data-loading]")
+          .forEach(function (form) {
+            form.addEventListener("submit", function () {
+              var btn = form.querySelector('button[type="submit"]');
+              if (btn && !btn.disabled) {
+                btn.disabled = true;
+                btn.textContent = form.getAttribute("data-loading");
+              }
+            });
+          });
+      })();
+    </script>
+  </body>
+</html>

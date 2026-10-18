@@ -1,0 +1,69 @@
+# ==========================================================
+# Malaria Detection AI - .gitignore
+# ==========================================================
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+
+# ---------- Virtual environments ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- Secrets & local config (NEVER commit) ----------
+.secret_key
+.env
+.env.*
+*.pem
+*.key
+
+# ---------- User database (real user accounts + password hashes) ----------
+users.db
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# ---------- Uploaded patient images ----------
+static/uploads/*
+!static/uploads/.gitkeep
+
+# ---------- Dataset (large, not for git) ----------
+Dataset/
+dataset/
+
+# ---------- Model files ----------
+# The deployed model + labels must be committed, so these are NOT ignored:
+#   malaria_model.keras
+#   class_indices.json
+# Old or duplicate model versions are ignored:
+final_malaria_model.keras
+malaria_model.h5
+*.h5
+checkpoints/
+
+# ---------- Training logs ----------
+logs/
+runs/
+lightning_logs/
+*.log
+
+# ---------- Editors / IDEs ----------
+.vscode/
+.idea/
+tempCodeRunnerFile.py
+*.swp
+.ipynb_checkpoints/
+
+# ---------- OS files ----------
+.DS_Store
+Thumbs.db
+desktop.ini

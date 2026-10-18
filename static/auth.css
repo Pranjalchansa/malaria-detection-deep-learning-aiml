@@ -1,0 +1,451 @@
+/* ==========================================================
+   Malaria AI - sign-in screens
+   Same colours as style.css: dark teal gradient, teal accent,
+   glass card, coral button. Text colours checked for contrast.
+   ========================================================== */
+
+:root {
+  --bg-1: #0f2027;
+  --bg-2: #1f2f38;
+  --bg-3: #2c5364;
+
+  --text: #ffffff;
+  --text-soft: #c9d6dc;
+  --text-faint: #a9bac2;
+
+  --teal: #1abc9c;
+  --teal-dark: #16a085;
+  --teal-text-on-white: #0d7a64;
+
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-line: rgba(255, 255, 255, 0.16);
+
+  --input-bg: #ffffff;
+  --input-text: #0f2027;
+  --input-placeholder: #5b6b74;
+
+  --btn-from: #e0305a;
+  --btn-to: #de3a1c;
+
+  --error-text: #ffb8b2;
+  --error-bg: rgba(255, 82, 70, 0.16);
+  --error-line: rgba(255, 130, 120, 0.4);
+  --ok-text: #8ff0d4;
+  --ok-bg: rgba(26, 188, 156, 0.16);
+  --ok-line: rgba(26, 188, 156, 0.45);
+
+  --font: "Poppins", "Segoe UI", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Layout ---------- */
+
+.auth {
+  display: grid;
+  grid-template-columns: minmax(360px, 5fr) 6fr;
+  min-height: 100vh;
+}
+
+/* ---------- Left: the microscope field ---------- */
+
+.auth-aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 40px 48px;
+  background: rgba(0, 0, 0, 0.28);
+  border-right: 1px solid var(--glass-line);
+  overflow: hidden;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+
+.aside-copy h2 {
+  margin: 0 0 12px;
+  max-width: 14em;
+  font-weight: 600;
+  font-size: clamp(26px, 2.8vw, 36px);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.aside-copy p {
+  margin: 0;
+  max-width: 30em;
+  color: var(--text-soft);
+}
+
+.field-view {
+  display: flex;
+  justify-content: center;
+}
+
+.field-view svg {
+  width: min(100%, 400px);
+  height: auto;
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.55));
+}
+
+/* The single moment of motion: the smear slowly drifts under the lens. */
+.cells {
+  animation: drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-16px, 12px);
+  }
+}
+
+.aside-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+/* ---------- Right: the form ---------- */
+
+.auth-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.auth-card h1 {
+  margin: 0 0 6px;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.auth-card .lead {
+  margin: 0 0 24px;
+  color: var(--text-soft);
+  font-size: 14px;
+}
+
+/* ---------- Alerts ---------- */
+
+.alerts {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.alert {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.alert svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.alert-error {
+  color: var(--error-text);
+  background: var(--error-bg);
+  border-color: var(--error-line);
+}
+
+.alert-success {
+  color: var(--ok-text);
+  background: var(--ok-bg);
+  border-color: var(--ok-line);
+}
+
+/* ---------- Form ---------- */
+
+.form {
+  display: grid;
+  gap: 18px;
+}
+
+.field label,
+.field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.field-label a {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--input-text);
+  background: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 12px rgba(26, 188, 156, 0.55);
+}
+
+.pw {
+  position: relative;
+}
+
+.pw .input {
+  padding-right: 70px;
+}
+
+.pw-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  height: 34px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal-text-on-white);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pw-toggle:hover {
+  background: #e3f6f1;
+}
+
+.pw-toggle:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+/* ---------- Password strength ---------- */
+
+.meter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.meter span {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s;
+}
+
+.meter[data-level="1"] span:nth-child(-n + 1) {
+  background: #ff6b5e;
+}
+.meter[data-level="2"] span:nth-child(-n + 2) {
+  background: #ffa43a;
+}
+.meter[data-level="3"] span:nth-child(-n + 3) {
+  background: #e6cf3a;
+}
+.meter[data-level="4"] span:nth-child(-n + 4) {
+  background: var(--teal);
+}
+
+.hint {
+  margin: 6px 0 0;
+  min-height: 1.2em;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+.hint.bad {
+  color: var(--error-text);
+}
+
+.hint.good {
+  color: var(--ok-text);
+}
+
+/* ---------- Buttons & links ---------- */
+
+.btn {
+  height: 48px;
+  margin-top: 4px;
+  padding: 0 20px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(45deg, var(--btn-from), var(--btn-to));
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 75, 43, 0.4);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.btn[disabled] {
+  cursor: progress;
+  opacity: 0.85;
+  transform: none;
+  box-shadow: none;
+}
+
+a {
+  color: var(--teal);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.switch {
+  margin: 22px 0 0;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.footer-note {
+  margin: 28px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--glass-line);
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 860px) {
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-aside {
+    padding: 18px 24px;
+    gap: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--glass-line);
+  }
+
+  .aside-copy,
+  .field-view,
+  .aside-note {
+    display: none;
+  }
+
+  .auth-main {
+    align-items: flex-start;
+    padding: 28px 16px 40px;
+  }
+
+  .auth-card {
+    padding: 28px 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cells {
+    animation: none;
+  }
+
+  * {
+    transition: none !important;
+  }
+}
